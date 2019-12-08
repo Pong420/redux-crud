@@ -1,0 +1,52 @@
+{
+  "name": "redux-crud",
+  "version": "1.0.0",
+  "author": "@Pong420",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "sideEffects": false,
+  "files": [
+    "lib/",
+    "esm/"
+  ],
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint 'src/**/*.{ts,tsx}'",
+    "build:cjs": "tsc",
+    "build:es": "tsc -m esNext --outDir esm",
+    "build": "yarn build:cjs && yarn build:es",
+    "prepublishOnly": "yarn test && yarn build "
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --ignore-path .eslintignore --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "2.10.0",
+    "@typescript-eslint/parser": "2.10.0",
+    "eslint": "6.7.2",
+    "eslint-plugin-react-hooks": "2.3.0",
+    "husky": "3.1.0",
+    "jest": "24.9.0",
+    "lint-staged": "9.5.0",
+    "prettier": "^1.19.1",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "typescript": "^3.7.3"
+  },
+  "dependencies": {
+    "ts-jest": "^24.2.0"
+  }
+}
