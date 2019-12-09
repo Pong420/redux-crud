@@ -1,86 +1,70 @@
 ## Redux CRUD
 
+[Demo](https://stackblitz.com/edit/react-redux-crud-todo)
+
 `/typings.ts`
 
 ```ts
-interface Schema$User {
-  id: string;
-  username: string;
+export interface Schema$Todo {
+  uniqueID: string;
+  task: string;
+  completed: boolean;
 }
 ```
 
-`/actions/user.ts`
+`/store/actions.ts`
 
 ```ts
-import { getCRUDActionCreator, UnionCRUDActions } from '../createCRUDActions';
-import { Schema$User } from '../typings';
+import { Schema$Todo } from '../typings';
+import {
+  getCRUDActionCreator,
+  UnionCRUDActions,
+} from '../redux-crud/createCRUDActions';
 
-export enum UserActionTypes {
-  CREATE = 'CREATE_USER',
-  DELETE = 'DELETE_USER',
-  UPDATE = 'UPDATE_USER',
-  RESET = 'RESET_USERS',
-  PAGINATE = 'PAGINATE_USER',
-  SET_PAGE = 'SET_PAGE_USER',
+export enum TodoActionTypes {
+  CREATE = 'CREATE_TODO',
+  DELETE = 'DELETE_TODO',
+  UPDATE = 'UPDATE_TODO',
+  RESET = 'RESET_TODOS',
+  PAGINATE = 'PAGINATE_TODO',
+  SET_PAGE = 'SET_PAGE_TODO',
 }
 
 const crudActionsCreator = getCRUDActionCreator<
-  typeof UserActionTypes,
-  Schema$User,
-  'id'
+  typeof TodoActionTypes,
+  Schema$Todo,
+  'uniqueID'
 >();
 
-export const userActions = {
-  createUser: crudActionsCreator<'CREATE'>(UserActionTypes.CREATE),
-  deleteUser: crudActionsCreator<'DELETE'>(UserActionTypes.DELETE),
-  updateUser: crudActionsCreator<'UPDATE'>(UserActionTypes.UPDATE),
-  resetUsers: crudActionsCreator<'RESET'>(UserActionTypes.RESET),
-  paginateUser: crudActionsCreator<'PAGINATE'>(UserActionTypes.PAGINATE),
-  setPageUser: crudActionsCreator<'SET_PAGE'>(UserActionTypes.SET_PAGE),
+export const todoActions = {
+  createTodo: crudActionsCreator['CREATE'](TodoActionTypes.CREATE),
+  deleteTodo: crudActionsCreator['DELETE'](TodoActionTypes.DELETE),
+  updateTodo: crudActionsCreator['UPDATE'](TodoActionTypes.UPDATE),
+  resetTodos: crudActionsCreator['RESET'](TodoActionTypes.RESET),
+  paginateTodo: crudActionsCreator['PAGINATE'](TodoActionTypes.PAGINATE),
+  setPageTodo: crudActionsCreator['SET_PAGE'](TodoActionTypes.SET_PAGE),
 };
 ```
 
-`/reducers/user.ts`
+`/store/reducer.ts`
 
 ```ts
-import { UserActions, UserActionTypes } from '../actions/user';
-import { createCRUDReducer, CRUDState } from '../createCRUDReducer';
-import { Schema$User } from '../typings';
+import { combineReducers, Reducer, AnyAction } from 'redux';
+import { createCRUDReducer } from '../redux-crud/createCRUDReducer';
+import { Schema$Todo } from '../typings';
 
-interface State extends CRUDState<Schema$User, 'id'> {}
-
-const { crudInitialState, crudReducer } = createCRUDReducer<Schema$User, 'id'>({
-  key: 'id',
-});
-
-export default function(state = crudInitialState, action: UserActions): State {
-  switch (action.type) {
-    case UserActionTypes.RESET:
-      return crudReducer(undefined, { type: 'RESET' });
-
-    case UserActionTypes.CREATE:
-      return crudReducer(state, { type: 'CREATE', payload: action.payload });
-
-    case UserActionTypes.PAGINATE:
-      return crudReducer(state, {
-        type: 'PAGINATE',
-        payload: action.payload,
-      });
-
-    case UserActionTypes.SET_PAGE:
-      return crudReducer(state, {
-        type: 'SET_PAGE',
-        payload: action.payload,
-      });
-
-    case UserActionTypes.DELETE:
-      return crudReducer(state, { type: 'DELETE', payload: action.payload });
-
-    case UserActionTypes.UPDATE:
-      return crudReducer(state, { type: 'UPDATE', payload: action.payload });
-
-    default:
-      return state;
+const { crudReducer: todoReducer } = createCRUDReducer<Schema$Todo, 'uniqueID'>(
+  {
+    key: 'uniqueID',
   }
-}
+);
+
+const rootReducer = () =>
+  combineReducers({
+    todo: todoReducer,
+  });
+
+export default rootReducer;
+
+export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
 ```

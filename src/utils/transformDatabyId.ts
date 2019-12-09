@@ -19,15 +19,12 @@ export function transformDatabyId<
   middleware: (item: I, index: number) => O = item => item
 ): TransformDataById<I, K, O> {
   const ids: Array<I[K]> = [];
-  const byIds = items.reduce(
-    (result, item, index) => {
-      const id = item[key];
-      ids.push(id);
-      result[id] = middleware(item, index);
-      return result;
-    },
-    {} as Record<I[K], O>
-  );
+  const byIds = items.reduce((result, item, index) => {
+    const id = item[key];
+    ids.push(id);
+    result[id] = middleware(item, index);
+    return result;
+  }, {} as Record<I[K], O>);
 
   return { byIds, ids };
 }
