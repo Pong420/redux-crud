@@ -2,6 +2,12 @@
 
 [Demo - Todo Task](https://stackblitz.com/edit/react-redux-crud-todo)
 
+## installation
+
+```
+yarn add @pong420/redux-crud
+```
+
 `/typings.ts`
 
 ```ts

@@ -1,5 +1,5 @@
 {
-  "name": "redux-crud",
+  "name": "@pong420/redux-crud",
   "version": "1.0.0",
   "author": "@Pong420",
   "license": "MIT",
@@ -19,7 +19,7 @@
     "build:cjs": "tsc",
     "build:es": "tsc -m esNext --outDir esm",
     "build": "yarn build:cjs && yarn build:es",
-    "prepublishOnly": "yarn test && yarn build "
+    "prepublishOnly": "yarn test && yarn build"
   },
   "husky": {
     "hooks": {
