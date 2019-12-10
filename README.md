@@ -8,6 +8,8 @@
 yarn add @pong420/redux-crud
 ```
 
+## Basic Example
+
 `/typings.ts`
 
 ```ts
@@ -74,3 +76,7 @@ export default rootReducer;
 
 export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
 ```
+
+## Note
+
+- `createCRUDReducer` will try to get `pageNo` from url search params as initial value. To disable this feature, you could assign `{ pageNo: 1 }` to `createCRUDReducer`
