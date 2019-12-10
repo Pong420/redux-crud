@@ -1,6 +1,7 @@
 ## Redux CRUD
 
 [Demo - Todo Task](https://stackblitz.com/edit/react-redux-crud-todo)
+[Demo - Pagination](https://stackblitz.com/edit/react-redux-crud-pagination)
 
 ## installation
 
