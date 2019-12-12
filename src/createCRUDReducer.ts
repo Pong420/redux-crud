@@ -150,7 +150,10 @@ export function createCRUDReducer<
             ids: removeFromArray(state.ids, index),
             list: removeFromArray(state.list, index),
             byIds,
-            pageNo: Math.min(Math.ceil(total / pageSize), state.pageNo),
+            pageNo: Math.min(
+              Math.max(1, Math.ceil(total / pageSize)),
+              state.pageNo
+            ),
           };
         })();
 
