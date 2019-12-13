@@ -40,7 +40,7 @@ export type CRUDActions<
   K extends AllowedNames<I, PropertyKey>
 > = ValueOf<CRUDActionsMap<I, K>>;
 
-export interface GetCRUDReducerOptions<
+export interface CreateCRUDReducerOptions<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>
 > extends Partial<CRUDState<I, K>> {
@@ -69,7 +69,7 @@ export function createCRUDReducer<
   actions,
   pageSize = 10,
   ...initialState
-}: GetCRUDReducerOptions<I, K>) {
+}: CreateCRUDReducerOptions<I, K>) {
   const match = window.location.search.match(/(?<=pageNo=)(.*)(?=(&?))/g);
   let pageNo = Number(match ? match[0] : 1);
   pageNo = isNaN(pageNo) ? 1 : pageNo;

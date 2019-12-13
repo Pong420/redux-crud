@@ -51,7 +51,7 @@ import {
   CRUDActionsMap,
   CRUDState,
   CRUDActions,
-  GetCRUDReducerOptions,
+  CreateCRUDReducerOptions,
   PaginationSelectorReturnType,
 } from '@pong420/redux-crud';
 import { AllowedNames } from '../typings';
@@ -101,7 +101,7 @@ export function createCRUDReducerEx<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>
 >(
-  props: GetCRUDReducerOptions<I, K, CRUDActionsMap<I, K> & { SEARCH: Search }>
+  props: CreateCRUDReducerOptions<I, K, CRUDActionsMap<I, K> & { SEARCH: Search }>
 ) {
   const { crudInitialState, crudReducer } = createCRUDReducer(props);
 
