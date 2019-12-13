@@ -40,11 +40,12 @@ export type CRUDActions<
   K extends AllowedNames<I, PropertyKey>
 > = ValueOf<CRUDActionsMap<I, K>>;
 
-interface Props<
+export interface GetCRUDReducerOptions<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>
 > extends Partial<CRUDState<I, K>> {
   key: I[K];
+  actions?: Record<keyof CRUDActionsMap<I, K>, string>;
 }
 
 export function isPagePayload<T>(obj: any): obj is PagePayload<T> {
@@ -63,7 +64,12 @@ function removeFromArray<T>(arr: T[], index: number) {
 export function createCRUDReducer<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>
->({ key, pageSize = 10, ...initialState }: Props<I, K>) {
+>({
+  key,
+  actions,
+  pageSize = 10,
+  ...initialState
+}: GetCRUDReducerOptions<I, K>) {
   const match = window.location.search.match(/(?<=pageNo=)(.*)(?=(&?))/g);
   let pageNo = Number(match ? match[0] : 1);
   pageNo = isNaN(pageNo) ? 1 : pageNo;
@@ -81,6 +87,10 @@ export function createCRUDReducer<
     state = crudInitialState,
     action: CRUDActions<I, K>
   ): CRUDState<I, K> {
+    if (actions && actions[action.sub] !== action.type) {
+      return state;
+    }
+
     switch (action.sub) {
       case 'RESET':
         return { ...crudInitialState, pageNo: 1 };

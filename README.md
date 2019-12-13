@@ -68,6 +68,7 @@ import { Schema$Todo } from '../typings';
 const { crudReducer: todoReducer } = createCRUDReducer<Schema$Todo, 'uniqueID'>(
   {
     key: 'uniqueID',
+    actions: TodoActionTypes,
   }
 );
 
@@ -79,6 +80,42 @@ const rootReducer = () =>
 export default rootReducer;
 
 export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
+```
+
+Without pass `actions` to createCRUDReducer, you may also handle like this
+
+```ts
+const { crudInitialState crudReducer } = createCRUDReducer<Schema$Todo, 'uniqueID'>({
+  key: 'uniqueID',
+});
+
+function todoReducer(
+  state = crudInitialState,
+  action: UserActions
+) {
+  switch (action.type) {
+    case TodoActionTypes.RESET:
+      return crudReducer(state, action);
+
+    case TodoActionTypes.CREATE:
+      return crudReducer(state, action);
+
+    case TodoActionTypes.DELETE:
+      return crudReducer(state, action);
+
+    case TodoActionTypes.UPDATE:
+      return crudReducer(state, action);
+
+    case TodoActionTypes.PAGINATE:
+      return crudReducer(state, action);
+
+    case TodoActionTypes.SET_PAGE:
+      return crudReducer(state, action);
+
+    default:
+      return state;
+  }
+}
 ```
 
 ## Note

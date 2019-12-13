@@ -51,17 +51,11 @@ import {
   CRUDActionsMap,
   CRUDState,
   CRUDActions,
+  GetCRUDReducerOptions,
   PaginationSelectorReturnType,
 } from '@pong420/redux-crud';
 import { AllowedNames } from '../typings';
 import qs from 'qs';
-
-interface Props<
-  I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>
-> extends Partial<CRUDState<I, K>> {
-  key: I[K];
-}
 
 export interface CRUDStateEx<
   I extends Record<PropertyKey, any>,
@@ -106,7 +100,9 @@ export function getCRUDActionCreatorEx<
 export function createCRUDReducerEx<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>
->(props: Props<I, K>) {
+>(
+  props: GetCRUDReducerOptions<I, K, CRUDActionsMap<I, K> & { SEARCH: Search }>
+) {
   const { crudInitialState, crudReducer } = createCRUDReducer(props);
 
   const { search } = qs.parse(window.location.search.slice(0));
@@ -120,6 +116,10 @@ export function createCRUDReducerEx<
     state = crudInitialStateEx,
     action: CRUDActionsEx<I, K>
   ): CRUDStateEx<I, K> {
+    if (props.actions && props.actions[action.sub] !== action.type) {
+      return state;
+    }
+
     switch (action.sub) {
       case 'SEARCH':
         return { ...crudInitialState, pageNo: 1, search: action.payload };
