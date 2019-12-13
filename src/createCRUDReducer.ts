@@ -42,10 +42,11 @@ export type CRUDActions<
 
 export interface CreateCRUDReducerOptions<
   I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>
+  K extends AllowedNames<I, PropertyKey>,
+  M extends CRUDActionsMap<I, K> = CRUDActionsMap<I, K>
 > extends Partial<CRUDState<I, K>> {
   key: I[K];
-  actions?: Record<keyof CRUDActionsMap<I, K>, string>;
+  actions?: Record<keyof M, string>;
 }
 
 export function isPagePayload<T>(obj: any): obj is PagePayload<T> {
@@ -63,13 +64,14 @@ function removeFromArray<T>(arr: T[], index: number) {
 
 export function createCRUDReducer<
   I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>
+  K extends AllowedNames<I, PropertyKey>,
+  M extends CRUDActionsMap<I, K> = CRUDActionsMap<I, K>
 >({
   key,
   actions,
   pageSize = 10,
   ...initialState
-}: CreateCRUDReducerOptions<I, K>) {
+}: CreateCRUDReducerOptions<I, K, M>) {
   const match = window.location.search.match(/(?<=pageNo=)(.*)(?=(&?))/g);
   let pageNo = Number(match ? match[0] : 1);
   pageNo = isNaN(pageNo) ? 1 : pageNo;
