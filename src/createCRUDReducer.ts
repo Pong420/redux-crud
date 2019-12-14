@@ -32,15 +32,18 @@ export type CRUDActionsTypes =
 export type CRUDActionsMap<
   I extends Record<PropertyKey, any> = any,
   K extends AllowedNames<I, PropertyKey> = any,
-  A extends Record<CRUDActionsTypes | string, string> = any,
-  T = ValueOf<A>
+  A extends Record<CRUDActionsTypes | string, string> = any
 > = {
-  RESET: { type: T; sub: 'RESET' };
-  CREATE: { type: T; sub: 'CREATE'; payload: I };
-  DELETE: { type: T; sub: 'DELETE'; payload: Pick<I, K> };
-  UPDATE: { type: T; sub: 'UPDATE'; payload: Pick<I, K> & Partial<I> };
-  PAGINATE: { type: T; sub: 'PAGINATE'; payload: PagePayload<I> };
-  SET_PAGE: { type: T; sub: 'SET_PAGE'; payload: number };
+  RESET: { type: A['RESET']; sub: 'RESET' };
+  CREATE: { type: A['CREATE']; sub: 'CREATE'; payload: I };
+  DELETE: { type: A['DELETE']; sub: 'DELETE'; payload: Pick<I, K> };
+  UPDATE: {
+    type: A['UPDATE'];
+    sub: 'UPDATE';
+    payload: Pick<I, K> & Partial<I>;
+  };
+  PAGINATE: { type: A['PAGINATE']; sub: 'PAGINATE'; payload: PagePayload<I> };
+  SET_PAGE: { type: A['SET_PAGE']; sub: 'SET_PAGE'; payload: number };
 };
 
 export type CRUDActions<
