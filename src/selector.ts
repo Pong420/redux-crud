@@ -1,27 +1,20 @@
 import { CRUDState } from './createCRUDReducer';
-import { AllowedNames } from './typings';
 
-export type PaginationSelectorReturnType<
-  I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>
-> = {
-  data: CRUDState<I, K>['list'];
-  ids: (I[K] | null)[];
+export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
+  data: S['list'];
+  ids: S['ids'];
   pageNo: number;
   pageSize: number;
   total: number;
   defer: boolean;
 };
 
-export function paginationSelector<
-  I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>
->({
+export function paginationSelector<S extends CRUDState<any, any>>({
   list,
   ids: _ids,
   pageNo,
   pageSize,
-}: CRUDState<I, K>): PaginationSelectorReturnType<I, K> {
+}: S): PaginationSelectorReturnType<S> {
   const start = (pageNo - 1) * pageSize;
   const data = list.slice(start, start + pageSize);
   const ids = _ids.slice(start, start + pageSize);

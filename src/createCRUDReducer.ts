@@ -21,32 +21,41 @@ interface PagePayload<T> {
   pageNo: number;
 }
 
+export type CRUDActionsTypes =
+  | 'RESET'
+  | 'CREATE'
+  | 'DELETE'
+  | 'UPDATE'
+  | 'PAGINATE'
+  | 'SET_PAGE';
+
 export type CRUDActionsMap<
   I extends Record<PropertyKey, any> = any,
-  K extends AllowedNames<I, PropertyKey> = any
+  K extends AllowedNames<I, PropertyKey> = any,
+  A extends Record<CRUDActionsTypes | string, string> = any,
+  T = ValueOf<A>
 > = {
-  RESET: { type: string; sub: 'RESET' };
-  CREATE: { type: string; sub: 'CREATE'; payload: I };
-  DELETE: { type: string; sub: 'DELETE'; payload: Pick<I, K> };
-  UPDATE: { type: string; sub: 'UPDATE'; payload: Pick<I, K> & Partial<I> };
-  PAGINATE: { type: string; sub: 'PAGINATE'; payload: PagePayload<I> };
-  SET_PAGE: { type: string; sub: 'SET_PAGE'; payload: number };
+  RESET: { type: T; sub: 'RESET' };
+  CREATE: { type: T; sub: 'CREATE'; payload: I };
+  DELETE: { type: T; sub: 'DELETE'; payload: Pick<I, K> };
+  UPDATE: { type: T; sub: 'UPDATE'; payload: Pick<I, K> & Partial<I> };
+  PAGINATE: { type: T; sub: 'PAGINATE'; payload: PagePayload<I> };
+  SET_PAGE: { type: T; sub: 'SET_PAGE'; payload: number };
 };
-
-export type CRUDActionsTypes = keyof CRUDActionsMap<any, any>;
 
 export type CRUDActions<
   I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>
-> = ValueOf<CRUDActionsMap<I, K>>;
+  K extends AllowedNames<I, PropertyKey>,
+  A extends Record<CRUDActionsTypes | string, string> = any
+> = ValueOf<CRUDActionsMap<I, K, A>>;
 
 export interface CreateCRUDReducerOptions<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>,
-  M extends CRUDActionsMap<I, K> = CRUDActionsMap<I, K>
+  A extends Record<CRUDActionsTypes | string, string>
 > extends Partial<CRUDState<I, K>> {
   key: I[K];
-  actions?: Record<keyof M, string>;
+  actions?: A;
 }
 
 export function isPagePayload<T>(obj: any): obj is PagePayload<T> {
@@ -74,13 +83,16 @@ function getURLParams() {
 export function createCRUDReducer<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>,
-  M extends CRUDActionsMap<I, K> = CRUDActionsMap<I, K>
+  A extends Record<CRUDActionsTypes | string, string> = Record<
+    CRUDActionsTypes | string,
+    string
+  >
 >({
   key,
   actions,
   pageSize = 10,
   ...initialState
-}: CreateCRUDReducerOptions<I, K, M>) {
+}: CreateCRUDReducerOptions<I, K, A>) {
   let pageNo = Number(getURLParams().pageNo);
   pageNo = isNaN(pageNo) ? 1 : pageNo;
 
@@ -95,7 +107,7 @@ export function createCRUDReducer<
 
   function crudReducer(
     state = crudInitialState,
-    action: CRUDActions<I, K>
+    action: CRUDActions<I, K, A>
   ): CRUDState<I, K> {
     if (actions && actions[action.sub] !== action.type) {
       return state;
