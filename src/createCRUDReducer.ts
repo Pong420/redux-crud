@@ -74,15 +74,6 @@ function removeFromArray<T>(arr: T[], index: number) {
   return [...arr.slice(0, index), ...arr.slice(index + 1)];
 }
 
-function getURLParams() {
-  const params: Record<string, string> = {};
-  window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, (s, k, v) => {
-    params[k] = v;
-    return s;
-  });
-  return params;
-}
-
 export function createCRUDReducer<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>,
@@ -96,14 +87,11 @@ export function createCRUDReducer<
   pageSize = 10,
   ...initialState
 }: CreateCRUDReducerOptions<I, K, A>) {
-  let pageNo = Number(getURLParams().pageNo);
-  pageNo = isNaN(pageNo) ? 1 : pageNo;
-
   const crudInitialState: CRUDState<I, K> = {
     ids: [],
     list: [],
     byIds: {} as CRUDState<I, K>['byIds'],
-    pageNo,
+    pageNo: 1,
     pageSize,
     ...initialState,
   };
