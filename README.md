@@ -4,8 +4,6 @@
 
 [Demo - Pagination](https://stackblitz.com/edit/react-redux-crud-pagination)
 
-[Example - Extend Redux CRUD](./examples/extend)
-
 ## installation
 
 ```
