@@ -137,6 +137,7 @@ export function createCRUDReducer<
 
           return {
             ...state,
+            pageNo,
             ids: insert(
               [
                 ...state.ids,
