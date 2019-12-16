@@ -4,6 +4,8 @@
 
 [Demo - Pagination](https://stackblitz.com/edit/react-redux-crud-pagination)
 
+[Examples - Handle pageNo or filter on URL search param](src/examples/URLSearchParams)
+
 ## installation
 
 ```
