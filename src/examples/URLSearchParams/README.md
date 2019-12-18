@@ -3,21 +3,44 @@
 1. install [connected-react-router](https://github.com/supasate/connected-react-router) and [qs](https://github.com/ljharb/qs)
 
 ```
-yarn add connected-react-router qs
+yarn add connected-react-router qs && yarn add --dev @types/qs
 ```
 
 2. Setup [connected-react-router](https://github.com/supasate/connected-react-router)
 
-3. create selector
+3. Create a wrapper function
 
-```ts
-import { paginationSelector } from '@pong420/redux-crud';
-import { RootState } from '../reducers';
+```typescript
+import {
+  createCRUDReducer,
+  paginationSelector,
+  CRUDState,
+  CRUDActions,
+  CRUDActionsTypes,
+  CreateCRUDReducerOptions,
+  AllowedNames,
+  PaginationSelectorReturnType,
+} from '@pong420/redux-crud';
+import { LocationChangeAction, LOCATION_CHANGE } from 'connected-react-router';
 import qs from 'qs';
 
-interface Params {
-  pageNo?: string;
-  filter?: string;
+export * from '@pong420/redux-crud';
+
+export interface CRUDStateEx<
+  I extends Record<PropertyKey, any>,
+  K extends AllowedNames<I, PropertyKey>
+> extends CRUDState<I, K> {
+  search?: string;
+  pathname?: string;
+}
+
+export type PaginationSelectorReturnTypeEx<
+  I extends Record<PropertyKey, any>,
+  K extends AllowedNames<I, PropertyKey>
+> = PaginationSelectorReturnType<CRUDState<I, K>> & { search?: string };
+
+function isLocationChangeAction(action: any): action is LocationChangeAction {
+  return action.type === LOCATION_CHANGE;
 }
 
 function parsePageNo(payload: any) {
@@ -25,38 +48,75 @@ function parsePageNo(payload: any) {
   return isNaN(pageNo) ? 1 : pageNo;
 }
 
-export const searchParamSelector = (state: RootState) => {
-  const { pageNo, filter } = qs.parse(
-    state.router.location.search.slice(1)
-  ) as Params;
-
-  return {
-    pageNo: parsePageNo(pageNo),
-    filter,
-  } as const;
+export const paginationSelectorEx = <
+  I extends Record<PropertyKey, any>,
+  K extends AllowedNames<I, PropertyKey>
+>({
+  search,
+  ...state
+}: CRUDStateEx<I, K>): PaginationSelectorReturnTypeEx<I, K> => {
+  return { ...paginationSelector<CRUDState<I, K>>(state), search };
 };
 
-export const userPaginationSelector = ({ pageNo }: { pageNo?: number }) => (
-  state: RootState
-) => paginationSelector({ ...state.user, ...(pageNo && { pageNo }) });
-```
+export function createCRUDReducerEx<
+  I extends Record<PropertyKey, any>,
+  K extends AllowedNames<I, PropertyKey>,
+  A extends Record<CRUDActionsTypes | string, string> = Record<
+    CRUDActionsTypes | string,
+    string
+  >
+>({ ...options }: CreateCRUDReducerOptions<I, K, A>) {
+  const { crudInitialState, crudReducer } = createCRUDReducer<I, K, A>(options);
 
-4. Usage
+  const initialState: CRUDStateEx<I, K> = {
+    ...crudInitialState,
+    search: qs.parse(window.location.search.slice(1)).search,
+    pathname: window.location.pathname.slice(
+      (process.env.PUBLIC_URL || '').length
+    ),
+  };
 
-```ts
-const { pageNo, filter } = useSelector(searchParamSelector);
+  function reducer(
+    state = initialState,
+    action: CRUDActions<I, K, A> | LocationChangeAction
+  ): CRUDStateEx<I, K> {
+    if (isLocationChangeAction(action)) {
+      return (() => {
+        const { location } = action.payload;
+        const params: { search?: string; pageNo?: string } = qs.parse(
+          location.search.slice(1)
+        );
+        const leave = location.pathname !== state.pathname;
+        const searchChanged = params.search !== state.search;
 
-const { data, ids, total, pageSize, defer } = useSelector(
-  userPaginationSelector({ pageNo: pageNo || 1 })
-);
+        if (leave) {
+          return {
+            ...initialState,
+            pathname: location.pathname,
+            search: undefined,
+            pageNo: 1,
+          };
+        }
 
-useEffect(() => {
-  if (!defer) {
-    axios.get('/api', { params: { pageNo, filter } });
+        if (searchChanged) {
+          return {
+            ...initialState,
+            search: params.search,
+            pageNo: 1,
+          };
+        }
+
+        return {
+          ...state,
+          search: params.search,
+          pageNo: parsePageNo(params.pageNo),
+        };
+      })();
+    }
+
+    return { ...state, ...crudReducer(state, action) };
   }
-}, [pageNo, filter, defer]);
 
-useEffect(() => {
-  dispatch(reset());
-}, [search]);
+  return [initialState, reducer] as const;
+}
 ```
