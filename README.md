@@ -28,10 +28,7 @@ export interface Schema$Todo {
 
 ```ts
 import { Schema$Todo } from '../typings';
-import {
-  getCRUDActionCreator,
-  UnionCRUDActions,
-} from '../redux-crud/createCRUDActions';
+import { getCRUDActionCreator, UnionCRUDActions } from '@pong420/redux-crud';
 
 export enum TodoActionTypes {
   CREATE = 'CREATE_TODO',
@@ -62,7 +59,7 @@ export const todoActions = {
 
 ```ts
 import { combineReducers, Reducer, AnyAction } from 'redux';
-import { createCRUDReducer } from '../redux-crud/createCRUDReducer';
+import { createCRUDReducer } from '@pong420/redux-crud';
 import { Schema$Todo } from '../typings';
 
 const { crudReducer: todoReducer } = createCRUDReducer<Schema$Todo, 'uniqueID'>(
@@ -80,40 +77,4 @@ const rootReducer = () =>
 export default rootReducer;
 
 export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
-```
-
-Without pass `actions` to createCRUDReducer, you may also handle like this
-
-```ts
-const { crudInitialState crudReducer } = createCRUDReducer<Schema$Todo, 'uniqueID'>({
-  key: 'uniqueID',
-});
-
-function todoReducer(
-  state = crudInitialState,
-  action: UserActions
-) {
-  switch (action.type) {
-    case TodoActionTypes.RESET:
-      return crudReducer(state, action);
-
-    case TodoActionTypes.CREATE:
-      return crudReducer(state, action);
-
-    case TodoActionTypes.DELETE:
-      return crudReducer(state, action);
-
-    case TodoActionTypes.UPDATE:
-      return crudReducer(state, action);
-
-    case TodoActionTypes.PAGINATE:
-      return crudReducer(state, action);
-
-    case TodoActionTypes.SET_PAGE:
-      return crudReducer(state, action);
-
-    default:
-      return state;
-  }
-}
 ```
