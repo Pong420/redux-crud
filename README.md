@@ -4,9 +4,7 @@
 
 [Demo - Pagination](https://stackblitz.com/edit/react-redux-crud-pagination)
 
-[Examples - Handle pageNo or filter on URL search param](src/examples/URLSearchParams)
-
-## installation
+## Installation
 
 ```
 yarn add @pong420/redux-crud
@@ -62,12 +60,13 @@ import { combineReducers, Reducer, AnyAction } from 'redux';
 import { createCRUDReducer } from '@pong420/redux-crud';
 import { Schema$Todo } from '../typings';
 
-const { crudReducer: todoReducer } = createCRUDReducer<Schema$Todo, 'uniqueID'>(
-  {
-    key: 'uniqueID',
-    actions: TodoActionTypes,
-  }
-);
+const [todoInitialState, todoReducer] = createCRUDReducer<
+  Schema$Todo,
+  'uniqueID'
+>({
+  key: 'uniqueID',
+  actions: TodoActionTypes,
+});
 
 const rootReducer = () =>
   combineReducers({
@@ -78,3 +77,22 @@ export default rootReducer;
 
 export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
 ```
+
+## URL Search Params
+
+The initial state will initialize `pageNo` and `search` from URL search params. See
+
+[Examples - Handle pageNo or filter on URL search param](src/examples/URLSearchParams)
+
+To disable this feature, you could
+
+```ts
+const [state, reducer] = createCRUDReducer({
+  // ...other otpions
+  disableSearchParams: true,
+});
+```
+
+## TODO
+
+[ ] Add Unit Test

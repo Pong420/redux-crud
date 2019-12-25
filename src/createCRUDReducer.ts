@@ -1,7 +1,7 @@
 import { transformDatabyId, removeFromArray, parsePageNo } from './utils';
 import { AllowedNames, ValueOf } from './typings';
 import { LocationChangeAction } from 'connected-react-router';
-import qs from 'querystring';
+import qs from 'query-string';
 
 const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
 
