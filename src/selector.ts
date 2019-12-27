@@ -15,7 +15,7 @@ export function paginationSelector<S extends CRUDState<any, any>>({
   ids: _ids,
   pageNo,
   pageSize,
-  search,
+  search
 }: S): PaginationSelectorReturnType<S> {
   const start = (pageNo - 1) * pageSize;
   const data = list.slice(start, start + pageSize);

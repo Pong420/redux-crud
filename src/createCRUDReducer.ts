@@ -57,7 +57,7 @@ export function createCRUDReducer<
     pathname: window.location.pathname.slice(
       (process.env.PUBLIC_URL || '').length
     ),
-    ...initialState,
+    ...initialState
   };
 
   function crudReducer(
@@ -82,7 +82,7 @@ export function createCRUDReducer<
             ...crudInitialState,
             pathname: location.pathname,
             search: undefined,
-            pageNo: 1,
+            pageNo: 1
           };
         }
 
@@ -90,14 +90,14 @@ export function createCRUDReducer<
           return {
             ...crudInitialState,
             search: params.search,
-            pageNo: 1,
+            pageNo: 1
           };
         }
 
         return {
           ...state,
           search: params.search,
-          pageNo: parsePageNo(params.pageNo),
+          pageNo: parsePageNo(params.pageNo)
         };
       })();
     }
@@ -116,7 +116,7 @@ export function createCRUDReducer<
             ids: [...state.ids, id],
             list: [...state.list, action.payload],
             byIds: { ...state.byIds, [id]: action.payload },
-            pageNo: Math.floor(state.list.length / pageSize) + 1,
+            pageNo: Math.floor(state.list.length / pageSize) + 1
           };
         })();
 
@@ -128,7 +128,7 @@ export function createCRUDReducer<
           const insert = <T1, T2>(arr: T1[], ids: T2[]) => [
             ...arr.slice(0, start),
             ...ids,
-            ...arr.slice(start + pageSize),
+            ...arr.slice(start + pageSize)
           ];
 
           return {
@@ -144,8 +144,8 @@ export function createCRUDReducer<
             ).slice(0, total),
             byIds: {
               ...state.byIds,
-              ...byIds,
-            },
+              ...byIds
+            }
           };
         })();
 
@@ -167,7 +167,7 @@ export function createCRUDReducer<
             pageNo: Math.min(
               Math.max(1, Math.ceil(total / pageSize)),
               state.pageNo
-            ),
+            )
           };
         })();
 
@@ -178,19 +178,19 @@ export function createCRUDReducer<
 
           const newUser = {
             ...state.byIds[id],
-            ...action.payload,
+            ...action.payload
           };
           return {
             ...state,
             byIds: {
               ...state.byIds,
-              [id]: newUser,
+              [id]: newUser
             },
             list: [
               ...state.list.slice(0, index),
               newUser,
-              ...state.list.slice(index + 1),
-            ],
+              ...state.list.slice(index + 1)
+            ]
           };
         })();
 
