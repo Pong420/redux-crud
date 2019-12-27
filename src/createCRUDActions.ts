@@ -1,5 +1,5 @@
 import { CRUDState } from './createCRUDReducer';
-import { AllowedNames, PagePayload } from './typings';
+import { AllowedNames, PagePayload, ValueOf } from './typings';
 
 export type UnionCRUDActions<
   T extends Record<string, (...args: any[]) => any>
@@ -43,40 +43,51 @@ type Map<
 export type CRUDActions<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>,
-  A extends Required<DefaultCRUDActions> = Required<DefaultCRUDActions>
-> = Map<I, K, A>[CRUDActionsTypes];
+  A extends DefaultCRUDActions = DefaultCRUDActions
+> = ValueOf<Map<I, K, A>>;
 
-export function getCRUDActionCreator<
-  Types extends { [T in CRUDActionsTypes]?: string },
+export function createCRUDActions<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>
->(actions: Types) {
-  type ActionCreator<
-    Key extends keyof Types,
-    Action = Map<I, K, Types>[Key]
-  > = Action extends {
-    payload: any;
-  }
-    ? (
-        payload: Action['payload']
-      ) => {
-        type: Types[Key];
-        sub: Key;
-        payload: Action['payload'];
-      }
-    : (payload?: undefined) => { type: Types[Key]; sub: Key };
+>() {
+  return <T extends string, M extends { [x: string]: [CRUDActionsTypes, T] }>(
+    map: M
+  ) => {
+    type Types = { [X in M[keyof M][0]]: M[keyof M][1] };
 
-  const result = {} as {
-    [Key in keyof Types]: ActionCreator<Key>;
+    type ActionCreator<
+      Key extends keyof Types,
+      Action = Map<I, K, Types>[Key]
+    > = Action extends {
+      payload: any;
+    }
+      ? (
+          payload: Action['payload']
+        ) => {
+          type: Types[Key];
+          sub: Key;
+          payload: Action['payload'];
+        }
+      : (payload?: undefined) => { type: Types[Key]; sub: Key };
+
+    const result = {} as {
+      [Key in keyof M]: ActionCreator<M[Key][0]>;
+    };
+
+    const actionsTypes = {} as Types;
+
+    for (const key in map) {
+      const [sub, type]: [keyof Types, ValueOf<Types>] = map[key];
+
+      actionsTypes[sub] = type;
+
+      result[key] = ((payload?: any) => ({
+        type,
+        payload,
+        sub
+      })) as any;
+    }
+
+    return [result, actionsTypes] as const;
   };
-
-  for (const sub in result) {
-    result[sub] = ((payload?: any) => ({
-      type: actions[sub],
-      payload,
-      sub,
-    })) as any;
-  }
-
-  return result;
 }

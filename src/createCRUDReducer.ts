@@ -102,7 +102,7 @@ export function createCRUDReducer<
       })();
     }
 
-    if (!action || actions[action.sub] !== action.type) {
+    if (actions[action.sub] !== action.type) {
       return state;
     }
 

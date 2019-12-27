@@ -28,36 +28,21 @@ export interface Schema$Todo {
 import { Schema$Todo } from '../typings';
 import { getCRUDActionCreator, UnionCRUDActions } from '@pong420/redux-crud';
 
-// The left hand's keys are specified.
+// The first value in the array specified, the second value can be any string.
 // You can define the action you need only
-export enum TodoActionTypes {
-  CREATE = 'CREATE_TODO',
-  DELETE = 'DELETE_TODO',
-  UPDATE = 'UPDATE_TODO',
-  RESET = 'RESET_TODOS',
-  PAGINATE = 'PAGINATE_TODO',
-  SET_PAGE = 'SET_PAGE_TODO',
-  SET_SEARCH = 'SET_SEARCH_TODO',
-  FORCE_UPDATE = 'FORCE_UPDATE_TODO',
-}
-
-const crudActionsCreator = getCRUDActionCreator<
-  typeof TodoActionTypes,
+export const [todoActions, TodoActionTypes] = createCRUDActions<
   Schema$Todo,
-  'uniqueID'
->();
-
-// Same as above, you can define the action you need only
-export const todoActions = {
-  createTodo: crudActionsCreator['CREATE'],
-  deleteTodo: crudActionsCreator['DELETE'],
-  updateTodo: crudActionsCreator['UPDATE'],
-  resetTodos: crudActionsCreator['RESET'],
-  paginateTodo: crudActionsCreator['PAGINATE'],
-  setPageTodo: crudActionsCreator['SET_PAGE'],
-  setSearchTodo: crudActionsCreator['SET_SEARCH'],
-  forceUpdateTodo: crudActionsCreator['FORCE_UPDATE'],
-};
+  'id'
+>()({
+  createTodo: ['CREATE', 'CREATE_TODO'],
+  deleteTodo: ['DELETE', 'DELETE_TODO'],
+  updateTodo: ['UPDATE', 'UPDATE_TODO'],
+  paginateTodo: ['PAGINATE', 'PAGINATE_TODO'],
+  setPageTodo: ['SET_PAGE', 'SET_PAGE_TODO'],
+  setSearchTodo: ['SET_SEARCH', 'SET_SEARCH_TODO'],
+  foreUpdateTodo: ['FORCE_UPDATE', 'FORCE_UPDATE_TODO'],
+  resetTodo: ['RESET', 'RESET_TODO'],
+});
 ```
 
 `/store/reducer.ts`
@@ -67,7 +52,10 @@ import { combineReducers, Reducer, AnyAction } from 'redux';
 import { createCRUDReducer } from '@pong420/redux-crud';
 import { Schema$Todo } from '../typings';
 
-const [todoInitialState, todoReducer] = createCRUDReducer<Schema$Todo>({
+const [todoInitialState, todoReducer] = createCRUDReducer<
+  Schema$Todo,
+  'uniqueID' // this generic are not required
+>({
   key: 'uniqueID',
   actions: TodoActionTypes,
 });
@@ -99,5 +87,5 @@ const [state, reducer] = createCRUDReducer({
 
 ## TODO
 
-[ ] Add Docs
-[ ] Add Unit Test
+- [ ] Add Docs
+- [ ] Add Unit Test
