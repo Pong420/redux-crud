@@ -1,6 +1,7 @@
-import { transformDatabyId, removeFromArray, parsePageNo } from './utils';
-import { AllowedNames, ValueOf } from './typings';
 import { LocationChangeAction } from 'connected-react-router';
+import { DefaultCRUDActions, CRUDActions } from './createCRUDActions';
+import { transformDatabyId, removeFromArray, parsePageNo } from './utils';
+import { AllowedNames } from './typings';
 import qs from 'query-string';
 
 const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
@@ -9,7 +10,7 @@ export interface CRUDState<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>
 > {
-  byIds: Record<I[K], I>;
+  byIds: { [X in I[K]]?: I };
   ids: Array<I[K] | null>;
   list: Array<I | Partial<I>>;
   pageNo: number;
@@ -18,52 +19,13 @@ export interface CRUDState<
   pathname?: string;
 }
 
-interface PagePayload<T> {
-  data: T[];
-  total: number;
-  pageNo: number;
-}
-
-export type CRUDActionsTypes =
-  | 'RESET'
-  | 'CREATE'
-  | 'DELETE'
-  | 'UPDATE'
-  | 'PAGINATE'
-  | 'SET_PAGE';
-
-export type DefaultCRUDActions = Record<CRUDActionsTypes | string, string>;
-
-export type CRUDActionsMap<
-  I extends Record<PropertyKey, any> = any,
-  K extends AllowedNames<I, PropertyKey> = any,
-  A extends DefaultCRUDActions = any
-> = {
-  RESET: { type: A['RESET']; sub: 'RESET' };
-  CREATE: { type: A['CREATE']; sub: 'CREATE'; payload: I };
-  DELETE: { type: A['DELETE']; sub: 'DELETE'; payload: Pick<I, K> };
-  UPDATE: {
-    type: A['UPDATE'];
-    sub: 'UPDATE';
-    payload: Pick<I, K> & Partial<I>;
-  };
-  PAGINATE: { type: A['PAGINATE']; sub: 'PAGINATE'; payload: PagePayload<I> };
-  SET_PAGE: { type: A['SET_PAGE']; sub: 'SET_PAGE'; payload: number };
-};
-
-export type CRUDActions<
-  I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>,
-  A extends DefaultCRUDActions = any
-> = ValueOf<CRUDActionsMap<I, K, A>>;
-
 export interface CreateCRUDReducerOptions<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>,
   A extends DefaultCRUDActions
 > extends Partial<CRUDState<I, K>> {
-  key: I[AllowedNames<I, PropertyKey>];
-  actions?: A;
+  key: K;
+  actions: A;
   disableSearchParams?: boolean;
 }
 
@@ -71,18 +33,9 @@ function isLocationChangeAction(action: any): action is LocationChangeAction {
   return action.type === LOCATION_CHANGE;
 }
 
-export function isPagePayload<T>(obj: any): obj is PagePayload<T> {
-  return !!(
-    obj &&
-    typeof obj === 'object' &&
-    obj.hasOwnProperty('pageNo') &&
-    obj.hasOwnProperty('data')
-  );
-}
-
 export function createCRUDReducer<
   I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>,
+  K extends AllowedNames<I, PropertyKey> = AllowedNames<I, PropertyKey>,
   A extends DefaultCRUDActions = DefaultCRUDActions
 >({
   key,
@@ -94,7 +47,7 @@ export function createCRUDReducer<
   const crudInitialState: CRUDState<I, K> = {
     ids: [],
     list: [],
-    byIds: {} as CRUDState<I, K>['byIds'],
+    byIds: {},
     pageNo: 1,
     pageSize,
     search: (qs.parse(window.location.search.slice(1)) as Record<
@@ -109,7 +62,9 @@ export function createCRUDReducer<
 
   function crudReducer(
     state = crudInitialState,
-    action: CRUDActions<I, K, A> | LocationChangeAction
+    action:
+      | CRUDActions<I, K, Required<DefaultCRUDActions>>
+      | LocationChangeAction
   ): CRUDState<I, K> {
     if (isLocationChangeAction(action)) {
       if (disableSearchParams) return state;
@@ -147,17 +102,11 @@ export function createCRUDReducer<
       })();
     }
 
-    if (actions && actions[action.sub] !== action.type) {
+    if (!action || actions[action.sub] !== action.type) {
       return state;
     }
 
     switch (action.sub) {
-      case 'RESET':
-        return { ...crudInitialState, pageNo: 1 };
-
-      case 'SET_PAGE':
-        return { ...state, pageNo: action.payload };
-
       case 'CREATE':
         return (() => {
           const id = action.payload[key];
@@ -176,7 +125,7 @@ export function createCRUDReducer<
           const { pageNo, data, total } = action.payload;
           const { byIds, ids } = transformDatabyId(data, key);
           const start = (pageNo - 1) * pageSize;
-          const insert = <T>(arr: T[], ids: T[]) => [
+          const insert = <T1, T2>(arr: T1[], ids: T2[]) => [
             ...arr.slice(0, start),
             ...ids,
             ...arr.slice(start + pageSize),
@@ -185,12 +134,12 @@ export function createCRUDReducer<
           return {
             ...state,
             pageNo,
-            ids: insert(
-              [...state.ids, ...(new Array(total).fill(null) as Array<null>)],
+            ids: insert<I[K], null>(
+              [...state.ids, ...new Array(total).fill(null)],
               ids
             ).slice(0, total),
-            list: insert(
-              [...state.list, ...(new Array(total).fill({}) as Partial<I>[])],
+            list: insert<I, Partial<I>>(
+              [...state.list, ...new Array(total).fill({})],
               data
             ).slice(0, total),
             byIds: {
@@ -244,6 +193,18 @@ export function createCRUDReducer<
             ],
           };
         })();
+
+      case 'SET_PAGE':
+        return { ...state, pageNo: action.payload };
+
+      case 'SET_SEARCH':
+        return { ...state, search: action.payload };
+
+      case 'FORCE_UPDATE':
+        return { ...state, ...action.payload };
+
+      case 'RESET':
+        return { ...crudInitialState, pageNo: 1 };
 
       default:
         return state;

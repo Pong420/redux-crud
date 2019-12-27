@@ -28,6 +28,8 @@ export interface Schema$Todo {
 import { Schema$Todo } from '../typings';
 import { getCRUDActionCreator, UnionCRUDActions } from '@pong420/redux-crud';
 
+// The left hand's keys are specified.
+// You can define the action you need only
 export enum TodoActionTypes {
   CREATE = 'CREATE_TODO',
   DELETE = 'DELETE_TODO',
@@ -35,6 +37,8 @@ export enum TodoActionTypes {
   RESET = 'RESET_TODOS',
   PAGINATE = 'PAGINATE_TODO',
   SET_PAGE = 'SET_PAGE_TODO',
+  SET_SEARCH = 'SET_SEARCH_TODO',
+  FORCE_UPDATE = 'FORCE_UPDATE_TODO',
 }
 
 const crudActionsCreator = getCRUDActionCreator<
@@ -43,13 +47,16 @@ const crudActionsCreator = getCRUDActionCreator<
   'uniqueID'
 >();
 
+// Same as above, you can define the action you need only
 export const todoActions = {
-  createTodo: crudActionsCreator['CREATE'](TodoActionTypes.CREATE),
-  deleteTodo: crudActionsCreator['DELETE'](TodoActionTypes.DELETE),
-  updateTodo: crudActionsCreator['UPDATE'](TodoActionTypes.UPDATE),
-  resetTodos: crudActionsCreator['RESET'](TodoActionTypes.RESET),
-  paginateTodo: crudActionsCreator['PAGINATE'](TodoActionTypes.PAGINATE),
-  setPageTodo: crudActionsCreator['SET_PAGE'](TodoActionTypes.SET_PAGE),
+  createTodo: crudActionsCreator['CREATE'],
+  deleteTodo: crudActionsCreator['DELETE'],
+  updateTodo: crudActionsCreator['UPDATE'],
+  resetTodos: crudActionsCreator['RESET'],
+  paginateTodo: crudActionsCreator['PAGINATE'],
+  setPageTodo: crudActionsCreator['SET_PAGE'],
+  setSearchTodo: crudActionsCreator['SET_SEARCH'],
+  forceUpdateTodo: crudActionsCreator['FORCE_UPDATE'],
 };
 ```
 
@@ -60,10 +67,7 @@ import { combineReducers, Reducer, AnyAction } from 'redux';
 import { createCRUDReducer } from '@pong420/redux-crud';
 import { Schema$Todo } from '../typings';
 
-const [todoInitialState, todoReducer] = createCRUDReducer<
-  Schema$Todo,
-  'uniqueID'
->({
+const [todoInitialState, todoReducer] = createCRUDReducer<Schema$Todo>({
   key: 'uniqueID',
   actions: TodoActionTypes,
 });
@@ -80,7 +84,7 @@ export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
 
 ## URL Search Params
 
-The initial state will initialize `pageNo` and `search` from URL search params. See
+By default, the initial state will initialize `pageNo` and `search` from URL search params. See
 
 [Examples - Handle pageNo or filter on URL search param](src/examples/URLSearchParams)
 
@@ -95,4 +99,5 @@ const [state, reducer] = createCRUDReducer({
 
 ## TODO
 
+[ ] Add Docs
 [ ] Add Unit Test

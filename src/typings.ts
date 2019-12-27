@@ -9,3 +9,18 @@ export type AllowedNames<Base, Condition> = FilterFlags<
 >[keyof Base];
 
 export type ValueOf<T> = T[keyof T];
+
+export interface PagePayload<T> {
+  data: T[];
+  total: number;
+  pageNo: number;
+}
+
+export function isPagePayload<T>(obj: any): obj is PagePayload<T> {
+  return !!(
+    obj &&
+    typeof obj === 'object' &&
+    obj.hasOwnProperty('pageNo') &&
+    obj.hasOwnProperty('data')
+  );
+}
