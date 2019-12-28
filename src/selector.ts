@@ -1,4 +1,4 @@
-import { CRUDState } from './createCRUDReducer';
+import { CRUDState, Params } from './createCRUDReducer';
 
 export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   data: S['list'];
@@ -7,7 +7,7 @@ export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   pageSize: number;
   total: number;
   defer: boolean;
-  search?: string;
+  params: Params;
 };
 
 export function paginationSelector<S extends CRUDState<any, any>>({
@@ -15,7 +15,7 @@ export function paginationSelector<S extends CRUDState<any, any>>({
   ids: _ids,
   pageNo,
   pageSize,
-  search
+  params
 }: S): PaginationSelectorReturnType<S> {
   const start = (pageNo - 1) * pageSize;
   const data = list.slice(start, start + pageSize);
@@ -29,5 +29,5 @@ export function paginationSelector<S extends CRUDState<any, any>>({
     }
   }
 
-  return { data, ids, pageNo, search, pageSize, total: list.length, defer };
+  return { data, ids, pageNo, params, pageSize, total: list.length, defer };
 }

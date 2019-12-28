@@ -16,6 +16,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:types": "tsc --noEmit",
     "build:cjs": "tsc",
     "build:es": "tsc -m esNext --outDir esm",
     "build": "yarn build:cjs && yarn build:es",
@@ -29,6 +30,7 @@
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "eslint --rule 'no-console: [\"error\", { allow: [\"warn\", \"error\"] }]'  --max-warnings=0",
+      "yarn lint:types",
       "prettier --ignore-path .eslintignore --write",
       "git add"
     ]

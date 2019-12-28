@@ -6,6 +6,8 @@ import qs from 'query-string';
 
 const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
 
+export type Params = { [x: string]: string };
+
 export interface CRUDState<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>
@@ -15,7 +17,7 @@ export interface CRUDState<
   list: Array<I | Partial<I>>;
   pageNo: number;
   pageSize: number;
-  search?: string;
+  params: Params;
   pathname?: string;
 }
 
@@ -50,10 +52,7 @@ export function createCRUDReducer<
     byIds: {},
     pageNo: 1,
     pageSize,
-    search: (qs.parse(window.location.search.slice(1)) as Record<
-      string,
-      string
-    >).search,
+    params: qs.parse(window.location.search.slice(1)) as Params,
     pathname: window.location.pathname.slice(
       (process.env.PUBLIC_URL || '').length
     ),
@@ -71,33 +70,41 @@ export function createCRUDReducer<
 
       return (() => {
         const { location } = action.payload;
-        const params: { search?: string; pageNo?: string } = qs.parse(
+        const { pageNo, ...params } = qs.parse(
           location.search.slice(1)
-        );
+        ) as Params;
         const leave = location.pathname !== state.pathname;
-        const searchChanged = params.search !== state.search;
+
+        let paramsChanged = false;
+
+        for (const key in params) {
+          if (params[key] !== state.params[key]) {
+            paramsChanged = true;
+            break;
+          }
+        }
 
         if (leave) {
           return {
             ...crudInitialState,
             pathname: location.pathname,
-            search: undefined,
+            params: {},
             pageNo: 1
           };
         }
 
-        if (searchChanged) {
+        if (paramsChanged) {
           return {
             ...crudInitialState,
-            search: params.search,
+            params,
             pageNo: 1
           };
         }
 
         return {
           ...state,
-          search: params.search,
-          pageNo: parsePageNo(params.pageNo)
+          params,
+          pageNo: parsePageNo(pageNo)
         };
       })();
     }
@@ -197,8 +204,8 @@ export function createCRUDReducer<
       case 'SET_PAGE':
         return { ...state, pageNo: action.payload };
 
-      case 'SET_SEARCH':
-        return { ...state, search: action.payload };
+      // case 'SET_SEARCH':
+      //   return { ...state, search: action.payload };
 
       case 'FORCE_UPDATE':
         return { ...state, ...action.payload };
