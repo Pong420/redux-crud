@@ -54,7 +54,7 @@ import { Schema$Todo } from '../typings';
 
 const [todoInitialState, todoReducer] = createCRUDReducer<
   Schema$Todo,
-  'uniqueID' // this generic are not required
+  'uniqueID' // this generic is not required
 >({
   key: 'uniqueID',
   actions: TodoActionTypes,
