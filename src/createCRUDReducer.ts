@@ -1,12 +1,10 @@
 import { LocationChangeAction } from 'connected-react-router';
-import { DefaultCRUDActions, CRUDActions } from './createCRUDActions';
+import { DefaultCRUDActions, CRUDActions, Params } from './createCRUDActions';
 import { transformDatabyId, removeFromArray, parsePageNo } from './utils';
 import { AllowedNames } from './typings';
 import qs from 'query-string';
 
 const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
-
-export type Params = { [x: string]: string };
 
 export interface CRUDState<
   I extends Record<PropertyKey, any>,
@@ -28,7 +26,7 @@ export interface CreateCRUDReducerOptions<
 > extends Partial<CRUDState<I, K>> {
   key: K;
   actions: A;
-  disableSearchParams?: boolean;
+  disableParamsParams?: boolean;
 }
 
 function isLocationChangeAction(action: any): action is LocationChangeAction {
@@ -43,7 +41,7 @@ export function createCRUDReducer<
   key,
   actions,
   pageSize = 10,
-  disableSearchParams,
+  disableParamsParams,
   ...initialState
 }: CreateCRUDReducerOptions<I, K, A>) {
   const crudInitialState: CRUDState<I, K> = {
@@ -66,7 +64,7 @@ export function createCRUDReducer<
       | LocationChangeAction
   ): CRUDState<I, K> {
     if (isLocationChangeAction(action)) {
-      if (disableSearchParams) return state;
+      if (disableParamsParams) return state;
 
       return (() => {
         const { location } = action.payload;
@@ -204,8 +202,8 @@ export function createCRUDReducer<
       case 'SET_PAGE':
         return { ...state, pageNo: action.payload };
 
-      // case 'SET_SEARCH':
-      //   return { ...state, search: action.payload };
+      case 'SET_PARAMS':
+        return { ...state, params: action.payload };
 
       case 'FORCE_UPDATE':
         return { ...state, ...action.payload };

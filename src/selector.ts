@@ -1,4 +1,5 @@
-import { CRUDState, Params } from './createCRUDReducer';
+import { Params } from './createCRUDActions';
+import { CRUDState } from './createCRUDReducer';
 
 export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   data: S['list'];

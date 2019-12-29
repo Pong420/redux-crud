@@ -39,9 +39,9 @@ export const [todoActions, TodoActionTypes] = createCRUDActions<
   updateTodo: ['UPDATE', 'UPDATE_TODO'],
   paginateTodo: ['PAGINATE', 'PAGINATE_TODO'],
   setPageTodo: ['SET_PAGE', 'SET_PAGE_TODO'],
-  setSearchTodo: ['SET_SEARCH', 'SET_SEARCH_TODO'],
+  setParamsTodo: ['SET_PARAMS', 'SET_PARAMS_TODO'],
   foreUpdateTodo: ['FORCE_UPDATE', 'FORCE_UPDATE_TODO'],
-  resetTodo: ['RESET', 'RESET_TODO'],
+  resetTodo: ['RESET', 'RESET_TODO']
 });
 ```
 
@@ -57,12 +57,12 @@ const [todoInitialState, todoReducer] = createCRUDReducer<
   'uniqueID' // this generic is not required
 >({
   key: 'uniqueID',
-  actions: TodoActionTypes,
+  actions: TodoActionTypes
 });
 
 const rootReducer = () =>
   combineReducers({
-    todo: todoReducer,
+    todo: todoReducer
   });
 
 export default rootReducer;
@@ -70,18 +70,18 @@ export default rootReducer;
 export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
 ```
 
-## URL Search Params
+## URL Params Params
 
-By default, the initial state will initialize `pageNo` and `search` from URL search params. See
+By default, the initial state will initialize `pageNo` and `params` from URL search params. See
 
-[Examples - Handle pageNo or filter on URL search param](src/examples/URLSearchParams)
+[Examples - Handle pageNo or filter on URL search params](src/examples/URLParamsParams)
 
 To disable this feature, you could
 
 ```ts
 const [state, reducer] = createCRUDReducer({
   // ...other otpions
-  disableSearchParams: true,
+  disableParamsParams: true
 });
 ```
 

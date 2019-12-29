@@ -1,6 +1,8 @@
 import { CRUDState } from './createCRUDReducer';
 import { AllowedNames, PagePayload, ValueOf } from './typings';
 
+export type Params = { [x: string]: string };
+
 export type UnionCRUDActions<
   T extends Record<string, (...args: any[]) => any>
 > = ReturnType<T[keyof T]>;
@@ -18,7 +20,7 @@ export type CRUDActionsBase<
     }
   | { sub: 'PAGINATE'; payload: PagePayload<I> }
   | { sub: 'SET_PAGE'; payload: number }
-  | { sub: 'SET_SEARCH'; payload?: string }
+  | { sub: 'SET_PARAMS'; payload: Params }
   | {
       sub: 'FORCE_UPDATE';
       payload: Partial<CRUDState<I, K>>;
@@ -53,31 +55,35 @@ export function createCRUDActions<
   return <T extends string, M extends { [x: string]: [CRUDActionsTypes, T] }>(
     map: M
   ) => {
-    type Types = { [X in M[keyof M][0]]: M[keyof M][1] };
+    type TupleToObject<T extends [CRUDActionsTypes, any]> = {
+      [key in T[0]]: Extract<T, [key, any]>[1];
+    };
+
+    type Types = TupleToObject<M[keyof M]>;
 
     type ActionCreator<
-      Key extends keyof Types,
-      Action = Map<I, K, Types>[Key]
+      Key extends keyof M,
+      Action = Map<I, K, Types>[M[Key][0]]
     > = Action extends {
       payload: any;
     }
       ? (
           payload: Action['payload']
         ) => {
-          type: Types[Key];
-          sub: Key;
+          type: M[Key][1];
+          sub: M[Key][0];
           payload: Action['payload'];
         }
-      : (payload?: undefined) => { type: Types[Key]; sub: Key };
+      : (payload?: undefined) => { type: M[Key][1]; sub: M[Key][0] };
 
     const result = {} as {
-      [Key in keyof M]: ActionCreator<M[Key][0]>;
+      [Key in keyof M]: ActionCreator<Key>;
     };
 
     const actionsTypes = {} as Types;
 
     for (const key in map) {
-      const [sub, type]: [keyof Types, ValueOf<Types>] = map[key];
+      const [sub, type] = map[key];
 
       actionsTypes[sub] = type;
 

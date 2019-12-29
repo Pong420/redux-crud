@@ -6,16 +6,16 @@
 yarn add connected-react-router query-string
 ```
 
-2. create hooks `useSearchParam.ts`
+2. create hooks `useParamsParam.ts`
 
 ```ts
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import qs from 'query-string';
 
-export function useSearchParam<T extends {}>() {
+export function useParamsParam<T extends {}>() {
   const history = useHistory();
-  const setSearchParam = useCallback(
+  const setParamsParam = useCallback(
     (payload: Partial<T> | ((params: Partial<T>) => Partial<T>)) => {
       const newState =
         typeof payload === 'function'
@@ -32,18 +32,18 @@ export function useSearchParam<T extends {}>() {
     [history]
   );
 
-  return { setSearchParam };
+  return { setParamsParam };
 }
 ```
 
-3. Then your could change `pageNo` and `search` using useSearchParam
+3. Then your can change `pageNo` and `params` using useParamsParam
 
 ```ts
-const { setSearchParam } = useSearchParam();
+const { setParamsParam } = useParamsParam();
 
-setSearchParam({ pageNo: 2 });
+setParamsParam({ pageNo: 2 });
 
 // or
 // keep other search params
-setSearchParam(params => ({ ...params, pageNo: 2 }));
+setParamsParam(params => ({ ...params, pageNo: 2 }));
 ```
