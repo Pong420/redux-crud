@@ -7,7 +7,7 @@ export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   pageNo: number;
   pageSize: number;
   total: number;
-  defer: boolean;
+  hasData: boolean;
   params: Params;
 };
 
@@ -22,13 +22,13 @@ export function paginationSelector<S extends CRUDState<any, any>>({
   const data = list.slice(start, start + pageSize);
   const ids = _ids.slice(start, start + pageSize);
 
-  let defer = !!data.length;
+  let hasData = !!data.length;
   for (const item of data) {
     if (Object.keys(item).length === 0) {
-      defer = false;
+      hasData = false;
       break;
     }
   }
 
-  return { data, ids, pageNo, params, pageSize, total: list.length, defer };
+  return { data, ids, pageNo, params, pageSize, total: list.length, hasData };
 }
