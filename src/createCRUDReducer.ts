@@ -72,10 +72,11 @@ export function createCRUDReducer<
           location.search.slice(1)
         ) as Params;
         const leave = location.pathname !== state.pathname;
+        const keys = { ...state.params, ...params };
 
         let paramsChanged = false;
 
-        for (const key in params) {
+        for (const key in keys) {
           if (params[key] !== state.params[key]) {
             paramsChanged = true;
             break;
