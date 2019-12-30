@@ -36,7 +36,7 @@ export function useParamsParam<T extends {}>() {
 }
 ```
 
-3. Then your can change `pageNo` and `params` using useParamsParam
+3. Then you can change `pageNo` and `params` using useParamsParam
 
 ```ts
 const { setParamsParam } = useParamsParam();

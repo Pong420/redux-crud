@@ -1,8 +1,11 @@
 import { LocationChangeAction } from 'connected-react-router';
 import { DefaultCRUDActions, CRUDActions, Params } from './createCRUDActions';
-import { transformDatabyId, removeFromArray, parsePageNo } from './utils';
+import {
+  OnLocationChanged,
+  handleLocationChanged
+} from './handleLocationChanged';
+import { transformDatabyId, removeFromArray } from './utils';
 import { AllowedNames } from './typings';
-import qs from 'query-string';
 
 const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
 
@@ -26,7 +29,7 @@ export interface CreateCRUDReducerOptions<
 > extends Partial<CRUDState<I, K>> {
   key: K;
   actions: A;
-  disableParamsParams?: boolean;
+  onLocationChanged?: OnLocationChanged | null;
 }
 
 function isLocationChangeAction(action: any): action is LocationChangeAction {
@@ -41,7 +44,7 @@ export function createCRUDReducer<
   key,
   actions,
   pageSize = 10,
-  disableParamsParams,
+  onLocationChanged = handleLocationChanged,
   ...initialState
 }: CreateCRUDReducerOptions<I, K, A>) {
   const crudInitialState: CRUDState<I, K> = {
@@ -50,10 +53,12 @@ export function createCRUDReducer<
     byIds: {},
     pageNo: 1,
     pageSize,
-    params: qs.parse(window.location.search.slice(1)) as Params,
-    pathname: window.location.pathname.slice(
-      (process.env.PUBLIC_URL || '').length
-    ),
+    params: {},
+    ...(onLocationChanged && {
+      pathname: window.location.pathname.slice(
+        (process.env.PUBLIC_URL || '').length
+      )
+    }),
     ...initialState
   };
 
@@ -64,48 +69,9 @@ export function createCRUDReducer<
       | LocationChangeAction
   ): CRUDState<I, K> {
     if (isLocationChangeAction(action)) {
-      if (disableParamsParams) return state;
-
-      return (() => {
-        const { location } = action.payload;
-        const { pageNo, ...params } = qs.parse(
-          location.search.slice(1)
-        ) as Params;
-        const leave = location.pathname !== state.pathname;
-        const keys = { ...state.params, ...params };
-
-        let paramsChanged = false;
-
-        for (const key in keys) {
-          if (params[key] !== state.params[key]) {
-            paramsChanged = true;
-            break;
-          }
-        }
-
-        if (leave) {
-          return {
-            ...crudInitialState,
-            pathname: location.pathname,
-            params: {},
-            pageNo: 1
-          };
-        }
-
-        if (paramsChanged) {
-          return {
-            ...crudInitialState,
-            params,
-            pageNo: 1
-          };
-        }
-
-        return {
-          ...state,
-          params,
-          pageNo: parsePageNo(pageNo)
-        };
-      })();
+      return onLocationChanged
+        ? onLocationChanged(crudInitialState, state, action)
+        : state;
     }
 
     if (actions[action.sub] !== action.type) {

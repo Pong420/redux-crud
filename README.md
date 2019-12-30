@@ -39,7 +39,6 @@ export const [todoActions, TodoActionTypes] = createCRUDActions<
   updateTodo: ['UPDATE', 'UPDATE_TODO'],
   paginateTodo: ['PAGINATE', 'PAGINATE_TODO'],
   setPageTodo: ['SET_PAGE', 'SET_PAGE_TODO'],
-  setParamsTodo: ['SET_PARAMS', 'SET_PARAMS_TODO'],
   foreUpdateTodo: ['FORCE_UPDATE', 'FORCE_UPDATE_TODO'],
   resetTodo: ['RESET', 'RESET_TODO']
 });
@@ -81,7 +80,7 @@ To disable this feature, you could
 ```ts
 const [state, reducer] = createCRUDReducer({
   // ...other otpions
-  disableParamsParams: true
+  onLocationChanged: null
 });
 ```
 
