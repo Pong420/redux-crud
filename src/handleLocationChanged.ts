@@ -42,6 +42,7 @@ export function handleLocationChanged(
   if (paramsChanged) {
     return {
       ...initialState,
+      pathname: location.pathname,
       params,
       pageNo: 1
     };
