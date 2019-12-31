@@ -71,16 +71,25 @@ export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
 
 ## URL Params Params
 
-By default, the initial state will initialize `pageNo` and `params` from URL search params. See
+By default, the initial state will initialize `pageNo` and `params` from URL search params. And update after location change if using with `connected-react-router`. See
 
 [Examples - Handle pageNo or filter on URL search params](src/examples/URLParamsParams)
 
-To disable this feature, you could
+To disable this feature, you can
 
 ```ts
 const [state, reducer] = createCRUDReducer({
   // ...other otpions
   onLocationChanged: null
+});
+```
+
+For **hash router**, you should assgin pathname yourself. Otherwise the `pageNo` and `params` will not initialize from search params
+
+```ts
+const [state, reducer] = createCRUDReducer({
+  // ...other otpions
+  pathname: window.location.hash.slice(1).replace(/\?.*/, '')
 });
 ```
 
