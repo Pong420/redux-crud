@@ -6,8 +6,5 @@ export function parsePageNo(payload: any) {
 }
 
 export function removeFromArray<T>(arr: T[], index: number) {
-  if (index < 0) {
-    return [...arr.slice(0, index), ...arr.slice(index + 1)];
-  }
-  return arr;
+  return index < 0 ? arr : [...arr.slice(0, index), ...arr.slice(index + 1)];
 }
