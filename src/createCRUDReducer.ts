@@ -172,11 +172,8 @@ export function createCRUDReducer<
       case 'SET_PARAMS':
         return { ...state, params: action.payload };
 
-      case 'FORCE_UPDATE':
-        return { ...state, ...action.payload };
-
       case 'RESET':
-        return { ...crudInitialState, pageNo: 1 };
+        return { ...crudInitialState, pageNo: 1, ...action.payload };
 
       default:
         return state;

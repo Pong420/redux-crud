@@ -39,7 +39,6 @@ export const [todoActions, TodoActionTypes] = createCRUDActions<
   updateTodo: ['UPDATE', 'UPDATE_TODO'],
   paginateTodo: ['PAGINATE', 'PAGINATE_TODO'],
   setPageTodo: ['SET_PAGE', 'SET_PAGE_TODO'],
-  foreUpdateTodo: ['FORCE_UPDATE', 'FORCE_UPDATE_TODO'],
   resetTodo: ['RESET', 'RESET_TODO']
 });
 ```

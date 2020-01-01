@@ -11,7 +11,6 @@ export type CRUDActionsBase<
   I extends Record<PropertyKey, any> = any,
   K extends AllowedNames<I, PropertyKey> = any
 > =
-  | { sub: 'RESET' }
   | { sub: 'CREATE'; payload: I }
   | { sub: 'DELETE'; payload: Pick<I, K> }
   | {
@@ -21,10 +20,7 @@ export type CRUDActionsBase<
   | { sub: 'PAGINATE'; payload: PagePayload<I> }
   | { sub: 'SET_PAGE'; payload: number }
   | { sub: 'SET_PARAMS'; payload: Params }
-  | {
-      sub: 'FORCE_UPDATE';
-      payload: Partial<CRUDState<I, K>>;
-    };
+  | { sub: 'RESET'; payload?: Partial<CRUDState<I, K>> };
 
 export type CRUDActionsTypes = CRUDActionsBase['sub'];
 
