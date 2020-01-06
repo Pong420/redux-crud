@@ -148,22 +148,26 @@ export function createCRUDReducer<
           const id: I[K] = action.payload[key] as any;
           const index = state.ids.indexOf(id);
 
-          const newUser = {
-            ...state.byIds[id],
-            ...action.payload
-          };
-          return {
-            ...state,
-            byIds: {
-              ...state.byIds,
-              [id]: newUser
-            },
-            list: [
-              ...state.list.slice(0, index),
-              newUser,
-              ...state.list.slice(index + 1)
-            ]
-          };
+          if (index !== -1) {
+            const newUser = {
+              ...state.byIds[id],
+              ...action.payload
+            };
+            return {
+              ...state,
+              byIds: {
+                ...state.byIds,
+                [id]: newUser
+              },
+              list: [
+                ...state.list.slice(0, index),
+                newUser,
+                ...state.list.slice(index + 1)
+              ]
+            };
+          }
+
+          return state;
         })();
 
       case 'SET_PAGE':
