@@ -50,7 +50,6 @@ export function handleLocationChanged(
 
   return {
     ...state,
-    params,
     pageNo: parsePageNo(pageNo)
   };
 }
