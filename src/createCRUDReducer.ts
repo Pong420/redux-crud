@@ -7,7 +7,7 @@ import {
 import { transformDatabyId, removeFromArray } from './utils';
 import { AllowedNames } from './typings';
 
-const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
+export const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
 
 export interface CRUDState<
   I extends Record<PropertyKey, any>,
@@ -165,6 +165,8 @@ export function createCRUDReducer<
                 ...state.list.slice(index + 1)
               ]
             };
+          } else {
+            console.warn(`[redux-crud] Fail to update as ${id} not exists`);
           }
 
           return state;
