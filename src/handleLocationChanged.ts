@@ -15,7 +15,7 @@ export function handleLocationChanged(
   qsParseOptions: ParseOptions = {}
 ) {
   const { location } = action.payload;
-  const params = qs.parse(location.search.slice(1), {
+  const { pageNo = 1, ...params } = qs.parse(location.search.slice(1), {
     ...qsParseOptions,
     parseNumbers: true,
     parseBooleans: true
@@ -52,6 +52,7 @@ export function handleLocationChanged(
 
   return {
     ...state,
+    pageNo: typeof pageNo === 'number' ? pageNo : 1,
     params
   };
 }
