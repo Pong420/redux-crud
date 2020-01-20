@@ -1,11 +1,12 @@
 import { LocationChangeAction } from 'connected-react-router';
-import { DefaultCRUDActions, CRUDActions, Params } from './createCRUDActions';
+import { DefaultCRUDActions, CRUDActions } from './createCRUDActions';
 import {
   OnLocationChanged,
   handleLocationChanged
 } from './handleLocationChanged';
 import { transformDatabyId, removeFromArray } from './utils';
 import { AllowedNames } from './typings';
+import { ParsedQuery } from 'query-string';
 
 export const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
 
@@ -18,7 +19,7 @@ export interface CRUDState<
   list: Array<I | Partial<I>>;
   pageNo: number;
   pageSize: number;
-  params: Params;
+  params: ParsedQuery<string | number | boolean>;
   pathname?: string;
 }
 

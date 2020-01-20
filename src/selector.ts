@@ -1,5 +1,5 @@
-import { Params } from './createCRUDActions';
 import { CRUDState } from './createCRUDReducer';
+import { ParsedQuery } from 'query-string';
 
 export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   data: S['list'];
@@ -8,7 +8,7 @@ export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   pageSize: number;
   total: number;
   hasData: boolean;
-  params: Params;
+  params: ParsedQuery<string | number | boolean>;
 };
 
 export function paginationSelector<S extends CRUDState<any, any>>({

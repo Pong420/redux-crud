@@ -1,7 +1,5 @@
 import { LocationChangeAction } from 'connected-react-router';
-import { Params } from './createCRUDActions';
 import { CRUDState } from './createCRUDReducer';
-import { parsePageNo } from './utils';
 import qs, { ParseOptions } from 'query-string';
 
 export type OnLocationChanged = (
@@ -17,10 +15,11 @@ export function handleLocationChanged(
   qsParseOptions: ParseOptions = {}
 ) {
   const { location } = action.payload;
-  const { pageNo, ...params } = qs.parse(
-    location.search.slice(1),
-    qsParseOptions
-  ) as Params;
+  const params = qs.parse(location.search.slice(1), {
+    ...qsParseOptions,
+    parseNumbers: true,
+    parseBooleans: true
+  });
   const leave = location.pathname !== state.pathname;
   const keys = { ...state.params, ...params };
 
@@ -53,7 +52,6 @@ export function handleLocationChanged(
 
   return {
     ...state,
-    params,
-    pageNo: parsePageNo(pageNo)
+    params
   };
 }

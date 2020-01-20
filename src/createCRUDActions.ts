@@ -1,7 +1,6 @@
 import { CRUDState } from './createCRUDReducer';
 import { AllowedNames, PagePayload, ValueOf } from './typings';
-
-export type Params = { [x: string]: string };
+import { ParsedQuery } from 'query-string';
 
 export type UnionCRUDActions<
   T extends Record<string, (...args: any[]) => any>
@@ -19,7 +18,7 @@ export type CRUDActionsBase<
     }
   | { sub: 'PAGINATE'; payload: PagePayload<I> }
   | { sub: 'SET_PAGE'; payload: number }
-  | { sub: 'SET_PARAMS'; payload: Params }
+  | { sub: 'SET_PARAMS'; payload: ParsedQuery<string | number | boolean> }
   | { sub: 'RESET'; payload?: Partial<CRUDState<I, K>> };
 
 export type CRUDActionsTypes = CRUDActionsBase['sub'];
