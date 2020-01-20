@@ -22,12 +22,11 @@ export function useParamsParam<T extends {}>() {
           ? payload(qs.parse(window.location.search.slice(1)) as T)
           : payload;
 
-      for (const key in newState) {
-        if (!newState[key]) {
-          delete newState[key];
-        }
-      }
-      history.push({ search: qs.stringify(newState) });
+      history.push({
+        search: qs.stringify(
+          JSON.parse(JSON.stringify(newState) // remove undefined
+        )
+      });
     },
     [history]
   );

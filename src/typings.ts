@@ -1,3 +1,5 @@
+import { ParsedQuery as DefaultParsedQuery } from 'query-string';
+
 // https://medium.com/dailyjs/typescript-create-a-condition-based-subset-types-9d902cea5b8c
 export type FilterFlags<Base, Condition> = {
   [Key in keyof Base]: Base[Key] extends Condition ? Key : never;
@@ -24,3 +26,5 @@ export function isPagePayload<T>(obj: any): obj is PagePayload<T> {
     obj.hasOwnProperty('data')
   );
 }
+
+export type ParsedQuery<T = string | number | boolean> = DefaultParsedQuery<T>;

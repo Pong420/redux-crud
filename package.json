@@ -1,6 +1,6 @@
 {
   "name": "@pong420/redux-crud",
-  "version": "1.3.2-beta.1",
+  "version": "1.3.2-beta.2",
   "author": "@Pong420",
   "license": "MIT",
   "main": "lib/index.js",
@@ -20,11 +20,11 @@
     "build:cjs": "tsc",
     "build:es": "tsc -m esNext --outDir esm",
     "build": "yarn build:cjs && yarn build:es",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "yarn lint-staged && yarn test && yarn build"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint && lint-staged"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
