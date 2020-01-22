@@ -4,6 +4,8 @@
 
 [Demo - Pagination](https://stackblitz.com/edit/react-redux-crud-pagination)
 
+[Demo - with React.useReducer](https://stackblitz.com/edit/react-redux-crud-todo-nyrfms?file=useCRUDReducer.ts)
+
 ## Installation
 
 ```
