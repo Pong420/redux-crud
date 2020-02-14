@@ -1,3 +1,4 @@
+import { ParsedQuery } from 'query-string';
 import { LocationChangeAction } from 'connected-react-router';
 import { DefaultCRUDActions, CRUDActions } from './createCRUDActions';
 import {
@@ -5,7 +6,7 @@ import {
   handleLocationChanged
 } from './handleLocationChanged';
 import { transformDatabyId, removeFromArray } from './utils';
-import { AllowedNames, ParsedQuery } from './typings';
+import { AllowedNames } from './typings';
 
 export const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
 

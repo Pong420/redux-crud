@@ -1,5 +1,6 @@
+import { ParsedQuery } from 'query-string';
 import { CRUDState } from './createCRUDReducer';
-import { AllowedNames, PagePayload, ValueOf, ParsedQuery } from './typings';
+import { AllowedNames, PagePayload, ValueOf } from './typings';
 
 export type UnionCRUDActions<
   T extends Record<string, (...args: any[]) => any>

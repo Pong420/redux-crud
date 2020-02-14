@@ -1,6 +1,6 @@
 {
   "name": "@pong420/redux-crud",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "author": "@Pong420",
   "license": "MIT",
   "main": "lib/index.js",

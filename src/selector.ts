@@ -1,5 +1,5 @@
+import { ParsedQuery } from 'query-string';
 import { CRUDState } from './createCRUDReducer';
-import { ParsedQuery } from './typings';
 
 export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   data: S['list'];
