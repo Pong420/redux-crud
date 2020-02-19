@@ -18,7 +18,8 @@ export const [todoActions, TodoActionTypes] = createCRUDActions<
 >()({
   createTodo: ['CREATE', 'CREATE_TODO'],
   deleteTodo: ['DELETE', 'DELETE_TODO'],
-  updateTodo: ['UPDATE', 'UPDATE_TODO']
+  updateTodo: ['UPDATE', 'UPDATE_TODO'],
+  resetTodo: ['RESET', 'RESET_TODO']
 });
 
 export const [todoInitialState, todoReducer] = createCRUDReducer<

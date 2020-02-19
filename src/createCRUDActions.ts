@@ -7,8 +7,8 @@ export type UnionCRUDActions<
 > = ReturnType<T[keyof T]>;
 
 export type CRUDActionsBase<
-  I extends Record<PropertyKey, any> = any,
-  K extends AllowedNames<I, PropertyKey> = any
+  I extends Record<PropertyKey, any>,
+  K extends AllowedNames<I, PropertyKey>
 > =
   | { sub: 'CREATE'; payload: I }
   | { sub: 'DELETE'; payload: Pick<I, K> }
@@ -21,7 +21,7 @@ export type CRUDActionsBase<
   | { sub: 'SET_PARAMS'; payload: ParsedQuery }
   | { sub: 'RESET'; payload?: Partial<CRUDState<I, K>> };
 
-export type CRUDActionsTypes = CRUDActionsBase['sub'];
+export type CRUDActionsTypes = CRUDActionsBase<any, any>['sub'];
 
 export type DefaultCRUDActions = { [X in CRUDActionsTypes]?: string };
 
@@ -59,9 +59,7 @@ export function createCRUDActions<
     type ActionCreator<
       Key extends keyof M,
       Action = Map<I, K, Types>[M[Key][0]]
-    > = Action extends {
-      payload: any;
-    }
+    > = Action extends { payload: any }
       ? (
           payload: Action['payload']
         ) => {
@@ -69,7 +67,15 @@ export function createCRUDActions<
           sub: M[Key][0];
           payload: Action['payload'];
         }
-      : (payload?: undefined) => { type: M[Key][1]; sub: M[Key][0] };
+      : Action extends { payload?: any }
+      ? (
+          payload?: Action['payload']
+        ) => {
+          type: M[Key][1];
+          sub: M[Key][0];
+          payload: Action['payload'];
+        }
+      : (payload?: void) => { type: M[Key][1]; sub: M[Key][0] };
 
     const result = {} as {
       [Key in keyof M]: ActionCreator<Key>;

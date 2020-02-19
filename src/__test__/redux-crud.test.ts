@@ -51,4 +51,10 @@ describe('Basic', () => {
     expect(todo.list).toEqual([]);
     expect(todo.byIds).toEqual({});
   });
+
+  it('reset', () => {
+    const params = { test: 'test' };
+    store.dispatch(todoActions.resetTodo({ params }));
+    expect(store.getState().todo.params).toEqual(params);
+  });
 });
