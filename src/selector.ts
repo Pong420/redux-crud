@@ -7,7 +7,7 @@ export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   pageSize: number;
   total: number;
   hasData: boolean;
-  params: object;
+  params: any;
 };
 
 export function paginationSelector<S extends CRUDState<any, any>>({
