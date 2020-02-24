@@ -18,7 +18,7 @@ export interface CRUDState<
   list: Array<I | Partial<I>>;
   pageNo: number;
   pageSize: number;
-  params: object;
+  params: any;
   pathname?: string;
 }
 

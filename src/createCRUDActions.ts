@@ -17,7 +17,7 @@ export type CRUDActionsBase<
     }
   | { sub: 'PAGINATE'; payload: PagePayload<I> }
   | { sub: 'SET_PAGE'; payload: number }
-  | { sub: 'SET_PARAMS'; payload: object }
+  | { sub: 'SET_PARAMS'; payload: any }
   | { sub: 'RESET'; payload?: Partial<CRUDState<I, K>> };
 
 export type CRUDActionsTypes = CRUDActionsBase<any, any>['sub'];
