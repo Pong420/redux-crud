@@ -1,9 +1,11 @@
 ## Usage with URL search params
 
-1. install [connected-react-router](https://github.com/supasate/connected-react-router) and [query-string](https://github.com/sindresorhus/query-string)
+1. install [connected-react-router](https://github.com/supasate/connected-react-router) and [qs](https://github.com/ljharb/qs)
 
 ```
-yarn add connected-react-router query-string
+yarn add connected-react-router qs
+
+yarn add
 ```
 
 2. create hooks `useParamsParam.ts`
@@ -11,7 +13,7 @@ yarn add connected-react-router query-string
 ```ts
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import qs from 'query-string';
+import qs from 'qs';
 
 export function useParamsParam<T extends {}>() {
   const history = useHistory();

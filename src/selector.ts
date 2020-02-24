@@ -1,4 +1,3 @@
-import { ParsedQuery } from 'query-string';
 import { CRUDState } from './createCRUDReducer';
 
 export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
@@ -8,7 +7,7 @@ export type PaginationSelectorReturnType<S extends CRUDState<any, any>> = {
   pageSize: number;
   total: number;
   hasData: boolean;
-  params: ParsedQuery;
+  params: object;
 };
 
 export function paginationSelector<S extends CRUDState<any, any>>({

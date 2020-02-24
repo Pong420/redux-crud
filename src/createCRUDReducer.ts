@@ -1,4 +1,3 @@
-import { ParsedQuery } from 'query-string';
 import { LocationChangeAction } from 'connected-react-router';
 import { DefaultCRUDActions, CRUDActions } from './createCRUDActions';
 import {
@@ -19,7 +18,7 @@ export interface CRUDState<
   list: Array<I | Partial<I>>;
   pageNo: number;
   pageSize: number;
-  params: ParsedQuery;
+  params: object;
   pathname?: string;
 }
 
