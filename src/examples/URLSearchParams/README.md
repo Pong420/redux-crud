@@ -4,8 +4,7 @@
 
 ```
 yarn add connected-react-router qs
-
-yarn add
+yarn add --dev @types/qs
 ```
 
 2. create hooks `useParamsParam.ts`

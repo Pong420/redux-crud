@@ -22,18 +22,22 @@ export const [todoActions, TodoActionTypes] = createCRUDActions<
   resetTodo: ['RESET', 'RESET_TODO']
 });
 
-export const [todoInitialState, todoReducer] = createCRUDReducer<
-  Schema$Todo,
-  'id'
->({
+export const [, todoReducer] = createCRUDReducer<Schema$Todo>({
   key: 'id',
   actions: TodoActionTypes
+});
+
+export const [s, prefillReducer] = createCRUDReducer<Schema$Todo>({
+  key: 'id',
+  actions: TodoActionTypes,
+  prefill: false
 });
 
 const createRootReducer = (history: Parameters<typeof connectRouter>[0]) =>
   combineReducers({
     router: connectRouter(history),
-    todo: todoReducer
+    todo: todoReducer,
+    prefill: prefillReducer
   });
 
 export type RootState = ReturnType<ReturnType<typeof createRootReducer>>;

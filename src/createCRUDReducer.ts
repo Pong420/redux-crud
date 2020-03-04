@@ -1,4 +1,5 @@
 import { IParseOptions } from 'qs';
+import { Reducer } from 'redux';
 import { LocationChangeAction } from 'connected-react-router';
 import { DefaultCRUDActions, CRUDActions } from './createCRUDActions';
 import {
@@ -12,16 +13,16 @@ export const LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
 
 export interface CRUDState<
   I extends Record<PropertyKey, any>,
-  K extends AllowedNames<I, PropertyKey>
+  K extends AllowedNames<I, PropertyKey>,
+  P extends boolean = true
 > {
   byIds: { [X in I[K]]?: I };
-  ids: Array<I[K] | null>;
-  list: Array<I | Partial<I>>;
+  ids: P extends true ? Array<I[K] | null> : I[K][];
+  list: P extends true ? Array<I | Partial<I>> : I[];
   pageNo: number;
   pageSize: number;
   params: any;
   pathname?: string;
-  parseOptions?: IParseOptions;
 }
 
 export interface CreateCRUDReducerOptions<
@@ -32,7 +33,18 @@ export interface CreateCRUDReducerOptions<
   key: K;
   actions: A;
   onLocationChanged?: OnLocationChanged | null;
+  parseOptions?: IParseOptions;
+  prefill?: boolean;
 }
+
+type CRUDReducer<
+  I extends Record<PropertyKey, any>,
+  K extends AllowedNames<I, PropertyKey>,
+  P extends boolean = true
+> = Reducer<
+  CRUDState<I, K, P>,
+  CRUDActions<I, K, Required<DefaultCRUDActions>> | LocationChangeAction
+>;
 
 function isLocationChangeAction(action: any): action is LocationChangeAction {
   return action.type === LOCATION_CHANGE;
@@ -42,14 +54,34 @@ export function createCRUDReducer<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey> = AllowedNames<I, PropertyKey>,
   A extends DefaultCRUDActions = DefaultCRUDActions
->({
-  key,
-  actions,
-  pageSize = 10,
-  parseOptions,
-  onLocationChanged = handleLocationChanged,
-  ...initialState
-}: CreateCRUDReducerOptions<I, K, A>) {
+>(
+  options: CreateCRUDReducerOptions<I, K, A> & { prefill: false }
+): [CRUDState<I, K, false>, CRUDReducer<I, K, false>];
+
+export function createCRUDReducer<
+  I extends Record<PropertyKey, any>,
+  K extends AllowedNames<I, PropertyKey> = AllowedNames<I, PropertyKey>,
+  A extends DefaultCRUDActions = DefaultCRUDActions
+>(
+  options: CreateCRUDReducerOptions<I, K, A> & { prefill?: true }
+): [CRUDState<I, K, true>, CRUDReducer<I, K, true>];
+
+export function createCRUDReducer<
+  I extends Record<PropertyKey, any>,
+  K extends AllowedNames<I, PropertyKey> = AllowedNames<I, PropertyKey>,
+  A extends DefaultCRUDActions = DefaultCRUDActions
+>(
+  options: CreateCRUDReducerOptions<I, K, A>
+): [CRUDState<I, K>, CRUDReducer<I, K>] {
+  const {
+    key,
+    actions,
+    pageSize = 10,
+    parseOptions,
+    onLocationChanged = handleLocationChanged,
+    prefill = true,
+    ...initialState
+  } = options;
   const crudInitialState: CRUDState<I, K> = {
     ids: [],
     list: [],
@@ -65,12 +97,7 @@ export function createCRUDReducer<
     ...initialState
   };
 
-  function crudReducer(
-    state = crudInitialState,
-    action:
-      | CRUDActions<I, K, Required<DefaultCRUDActions>>
-      | LocationChangeAction
-  ): CRUDState<I, K> {
+  const crudReducer: CRUDReducer<I, K> = (state = crudInitialState, action) => {
     if (isLocationChangeAction(action)) {
       return onLocationChanged
         ? onLocationChanged(crudInitialState, state, action, parseOptions)
@@ -110,11 +137,11 @@ export function createCRUDReducer<
             ...state,
             pageNo,
             ids: insert<I[K], null>(
-              [...state.ids, ...new Array(total).fill(null)],
+              [...state.ids, ...(prefill ? new Array(total).fill(null) : [])],
               ids
             ).slice(0, total),
             list: insert<I, Partial<I>>(
-              [...state.list, ...new Array(total).fill({})],
+              [...state.list, ...(prefill ? new Array(total).fill({}) : [])],
               data
             ).slice(0, total),
             byIds: {
@@ -187,7 +214,7 @@ export function createCRUDReducer<
       default:
         return state;
     }
-  }
+  };
 
-  return [crudInitialState, crudReducer] as const;
+  return [crudInitialState, crudReducer];
 }

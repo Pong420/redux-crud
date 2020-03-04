@@ -36,6 +36,7 @@ export const [todoActions, TodoActionTypes] = createCRUDActions<
   Schema$Todo,
   'id'
 >()({
+  // you could just add the actions that you needs
   createTodo: ['CREATE', 'CREATE_TODO'],
   deleteTodo: ['DELETE', 'DELETE_TODO'],
   updateTodo: ['UPDATE', 'UPDATE_TODO'],
@@ -52,10 +53,7 @@ import { combineReducers, Reducer, AnyAction } from 'redux';
 import { createCRUDReducer } from '@pong420/redux-crud';
 import { Schema$Todo } from '../typings';
 
-const [todoInitialState, todoReducer] = createCRUDReducer<
-  Schema$Todo,
-  'uniqueID' // this generic is not required
->({
+const [todoInitialState, todoReducer] = createCRUDReducer<Schema$Todo>({
   key: 'uniqueID',
   actions: TodoActionTypes
 });
@@ -68,11 +66,38 @@ const rootReducer = () =>
 export default rootReducer;
 
 export type RootState = ReturnType<ReturnType<typeof rootReducer>>;
+
 ```
 
-## URL Params Params
+## Options
 
-By default, the initial state will initialize `pageNo` and `params` from URL search params. And update after location change if using with `connected-react-router`. See
+You could add initial state here
+
+```ts
+const pageSize = 100;
+const [state, reducer] = createCRUDReducer({
+  // ...other otpions,
+  pageNo: 1,
+  pageSize,
+  ids: new Arrary(pageSize).fill(null),
+  list: new Arrary(pageSize).fill({})
+});
+```
+
+#### prefill
+
+By default, `list` and `ids` in `state` will prefill with `{}` and `null`. You could disable this feature by seting prefill to false
+
+```ts
+const [state, reducer] = createCRUDReducer({
+  // ...other otpions
+  prefill: false
+});
+```
+
+#### onLocationChanged
+
+If you are using `connected-react-router`. `pageNo` and `params` will initialize from URL search params. And `state` will reset when location changed
 
 [Examples - Handle pageNo or filter on URL search params](src/examples/URLParamsParams)
 
