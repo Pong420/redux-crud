@@ -1,36 +1,28 @@
 import { LocationChangeAction } from 'connected-react-router';
 import { CRUDState } from './createCRUDReducer';
-import { parsePageNo } from './utils';
+import { parsePageNo, isEqual } from './utils';
 import qs, { IParseOptions } from 'qs';
 
 export type OnLocationChanged = (
   initialState: CRUDState<any, any>,
   state: CRUDState<any, any>,
-  action: LocationChangeAction
-) => CRUDState<any, any>;
-
-export function handleLocationChanged(
-  initialState: CRUDState<any, any>,
-  state: CRUDState<any, any>,
   action: LocationChangeAction,
   qsParseOptions?: IParseOptions
-) {
+) => CRUDState<any, any>;
+
+export const handleLocationChanged: OnLocationChanged = (
+  initialState,
+  state,
+  action,
+  qsParseOptions
+) => {
   const { location } = action.payload;
   const { pageNo, ...params } = qs.parse(
     location.search.slice(1),
     qsParseOptions
   );
   const leave = location.pathname !== state.pathname;
-  const keys = { ...state.params, ...params };
-
-  let paramsChanged = false;
-
-  for (const key in keys) {
-    if (params[key] !== state.params[key]) {
-      paramsChanged = true;
-      break;
-    }
-  }
+  const paramsChanged = !isEqual(params, state.params);
 
   if (leave) {
     return {
@@ -55,4 +47,4 @@ export function handleLocationChanged(
     params,
     pageNo: parsePageNo(pageNo)
   };
-}
+};

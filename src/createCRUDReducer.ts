@@ -1,3 +1,4 @@
+import { IParseOptions } from 'qs';
 import { LocationChangeAction } from 'connected-react-router';
 import { DefaultCRUDActions, CRUDActions } from './createCRUDActions';
 import {
@@ -20,6 +21,7 @@ export interface CRUDState<
   pageSize: number;
   params: any;
   pathname?: string;
+  parseOptions?: IParseOptions;
 }
 
 export interface CreateCRUDReducerOptions<
@@ -44,6 +46,7 @@ export function createCRUDReducer<
   key,
   actions,
   pageSize = 10,
+  parseOptions,
   onLocationChanged = handleLocationChanged,
   ...initialState
 }: CreateCRUDReducerOptions<I, K, A>) {
@@ -70,7 +73,7 @@ export function createCRUDReducer<
   ): CRUDState<I, K> {
     if (isLocationChangeAction(action)) {
       return onLocationChanged
-        ? onLocationChanged(crudInitialState, state, action)
+        ? onLocationChanged(crudInitialState, state, action, parseOptions)
         : state;
     }
 
