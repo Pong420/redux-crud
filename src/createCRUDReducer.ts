@@ -179,7 +179,7 @@ export function createCRUDReducer<
           const index = state.ids.indexOf(id);
 
           if (index !== -1) {
-            const newUser = {
+            const newItem = {
               ...state.byIds[id],
               ...action.payload
             };
@@ -187,11 +187,11 @@ export function createCRUDReducer<
               ...state,
               byIds: {
                 ...state.byIds,
-                [id]: newUser
+                [id]: newItem
               },
               list: [
                 ...state.list.slice(0, index),
-                newUser,
+                newItem,
                 ...state.list.slice(index + 1)
               ]
             };
