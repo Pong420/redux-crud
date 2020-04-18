@@ -37,7 +37,7 @@ export interface CreateCRUDReducerOptions<
   prefill?: boolean;
 }
 
-type CRUDReducer<
+export type CRUDReducer<
   I extends Record<PropertyKey, any>,
   K extends AllowedNames<I, PropertyKey>,
   P extends boolean = true
