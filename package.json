@@ -16,15 +16,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
-    "lint:types": "tsc --noEmit",
     "build:cjs": "tsc",
     "build:es": "tsc -m esNext --outDir esm",
     "build": "yarn build:cjs && yarn build:es",
-    "prepublishOnly": "yarn lint:types && yarn test && yarn build"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint:types && lint-staged"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
@@ -35,28 +34,30 @@
     ]
   },
   "devDependencies": {
-    "@types/history": "^4.7.3",
-    "@types/jest": "^24.0.23",
+    "@types/history": "^4.7.5",
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.13.0",
     "@types/qs": "^6.9.1",
-    "@types/react-redux": "^7.1.5",
-    "@types/react-router": "^5.1.3",
-    "@types/redux": "^3.6.0",
-    "@typescript-eslint/eslint-plugin": "2.10.0",
-    "@typescript-eslint/parser": "2.10.0",
-    "connected-react-router": "^6.6.1",
-    "eslint": "6.7.2",
-    "eslint-plugin-react-hooks": "2.3.0",
-    "husky": "3.1.0",
-    "jest": "24.9.0",
-    "lint-staged": "9.5.0",
-    "prettier": "^1.19.1",
-    "react": "16.12.0",
-    "react-dom": "16.12.0",
-    "react-redux": "^7.1.3",
+    "@types/react": "^16.9.34",
+    "@types/react-redux": "^7.1.7",
+    "@types/react-router": "^5.1.5",
+    "@types/react-router-dom": "^5.1.4",
+    "@typescript-eslint/eslint-plugin": "2.28.0",
+    "@typescript-eslint/parser": "2.28.0",
+    "connected-react-router": "^6.8.0",
+    "eslint": "6.8.0",
+    "eslint-plugin-react-hooks": "3.0.0",
+    "husky": "4.2.5",
+    "jest": "25.3.0",
+    "lint-staged": "10.1.5",
+    "prettier": "^2.0.4",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
-    "redux": "^4.0.4",
-    "ts-jest": "^24.2.0",
-    "typescript": "^3.7.4"
+    "redux": "^4.0.5",
+    "ts-jest": "^25.4.0",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
     "qs": "^6.9.1"
