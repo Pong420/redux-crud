@@ -44,7 +44,6 @@ export const handleLocationChanged: OnLocationChanged = (
 
   return {
     ...state,
-    params,
     pageNo: parsePageNo(pageNo)
   };
 };
