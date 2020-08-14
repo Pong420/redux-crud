@@ -1,6 +1,6 @@
 {
   "name": "@pong420/redux-crud",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "author": "@Pong420",
   "license": "MIT",
   "main": "lib/index.js",
@@ -29,8 +29,7 @@
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "eslint --rule 'no-console: [\"error\", { allow: [\"warn\", \"error\"] }]'  --max-warnings=0",
-      "prettier --ignore-path .eslintignore --write",
-      "git add"
+      "prettier --ignore-path .eslintignore --write"
     ]
   },
   "devDependencies": {
